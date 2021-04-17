@@ -1,0 +1,43 @@
+#:kivy 1.0.9
+
+<HomeScreenButton@Button>:
+    size_hint: 0.75, 0.1
+    font_size: min(self.height * 0.7, self.width * 1.7 / len(self.text)) if len(self.text) else self.height
+    halign: "center"
+    valign: "middle"
+    bold: True
+
+<BackButton@Button>:
+    size_hint: 0.1, 0.1
+    pos_hint: {"x": 0.01, "y": 0.01}
+    text: "Back"
+    font_size: min(self.height * 0.7, self.width * 1.5 / len(self.text)) if len(self.text) else self.height
+    halign: "center"
+    valign: "middle"
+    bold: True
+
+<MainScreen>:
+    orientation: "vertical"
+    size: root.size
+    Label:
+        id: headerText
+        text: "Stats Machine"
+        bold: True
+        font_size: min(self.width * 0.1, self.height * 0.6)
+        pos_hint: {"x": 0, "y": 0.10}
+    HomeScreenButton:
+        id: KMCButton
+        text: "K-Means Clustering"
+        pos_hint: {"x": 0.125, "y": 0.35}
+        on_release: root.switchScreen("second")
+    HomeScreenButton:
+        id: SLRButton
+        text: "Simple Linear Regression"
+        pos_hint: {"x": 0.125, "y": 0.23}
+        on_release: root.switchScreen("second")
+
+<SecondScreen>:
+    orientation: "vertical"
+    size: root.size
+    BackButton:
+        on_release: root.switchScreen("main")
