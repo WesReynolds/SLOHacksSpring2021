@@ -61,20 +61,21 @@ dt_output = function(data1, target){
   data_train <- create_train_test(data1, 0.8, train = TRUE)
   data_test <- create_train_test(data1, 0.8, train = FALSE)
   
-  data1 = data.frame(data1)
-  
-  target = as.formula(paste(target, paste(variable), sep = "~"))
-  
-  tree = rpart(target, data = data_train, cp=.02)
+  target1 = as.formula(paste(target, paste(variable), sep = "~"))
+  tree = rpart(target1, data = data1, cp=.02)
   rpart.plot(tree)
-  
-  prediction = predict(tree, data_test)
-  table_mat <- table(data_test[], predict_unseen)
-  
   dev.off()
   
   #Accuracy
   
+  prediction = predict(tree, data_test, type='class')
+  
+  table_mat = table(data_test[[target]], prediction)
+  
+  accuracy = data.frame(sum(diag(table_mat)) / sum(table_mat))
+  names(accuracy) = c("accuracy")
+  
+  write.csv(accuracy, "accuracy.csv")
 }
 
 read_csv_dt = function(args){
