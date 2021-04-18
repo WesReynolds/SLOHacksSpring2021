@@ -7,6 +7,13 @@
     valign: "middle"
     bold: True
 
+<EntryField@TextInput>:
+    multiline: "false"
+    size_hint: 0.4, 0.075
+    font_size: min(self.height * 0.6, self.width * 1.4 / len(self.text)) if len(self.text) else self.height
+    halign: "center"
+    valign: "top"
+
 <BackButton@Button>:
     size_hint: 0.1, 0.1
     pos_hint: {"x": 0.01, "y": 0.01}
@@ -15,6 +22,21 @@
     halign: "center"
     valign: "middle"
     bold: True
+
+<GeneralPurposeButton@Button>:
+    size_hint: 0.5, 0.1
+    font_size: min(self.height * 0.7, self.width * 1.7 / len(self.text)) if len(self.text) else self.height
+    halign: "center"
+    valign: "middle"
+    bold: True
+
+
+<InfoLabel@Label>:
+    font_size: min(self.width * 0.05, self.height * 0.3)
+    halign: "center"
+    valign: "bottom"
+    bold: True
+
 
 <MainScreen>:
     orientation: "vertical"
@@ -29,15 +51,276 @@
         id: KMCButton
         text: "K-Means Clustering"
         pos_hint: {"x": 0.125, "y": 0.35}
-        on_release: root.switchScreen("second")
+        on_release: root.switchScreen("kmcInfo")
     HomeScreenButton:
         id: SLRButton
         text: "Simple Linear Regression"
         pos_hint: {"x": 0.125, "y": 0.23}
-        on_release: root.switchScreen("second")
+        on_release: root.switchScreen("slrInfo")
+    HomeScreenButton:
+        id: DTButton
+        text: "Decision Tree"
+        pos_hint: {"x": 0.125, "y": 0.11}
+        on_release: root.switchScreen("dtInfo")
 
-<SecondScreen>:
+    
+<KMCInfoScreen>:
     orientation: "vertical"
     size: root.size
     BackButton:
         on_release: root.switchScreen("main")
+    Label:
+        id: kmcInfoHeader
+        text: "KMC Info"
+        bold: True
+        font_size: min(self.width * 0.1, self.height * 0.6)
+        pos_hint: {"x": 0, "y": 0.25}
+    
+    Label:
+        id: kHeader
+        text: "K Value:"
+        bold: False
+        font_size: min(self.width * 0.08, self.height * 0.08)
+        pos_hint: {"x": -0.25, "y": 0.04}
+    
+    Label:
+        id: pathHeader
+        text: "Path:"
+        bold: False
+        font_size: min(self.width * 0.08, self.height * 0.08)
+        pos_hint: {"x": -0.25, "y": -0.06}
+
+    EntryField:
+        id: kInput
+        pos_hint: {"x": 0.4, "y": 0.5}
+        on_text: root.setK(self.text)
+
+    EntryField:
+        id: path
+        pos_hint: {"x": 0.4, "y": 0.4}
+        on_text: root.setPath(self.text)
+
+
+    GeneralPurposeButton:
+        halign: "center"
+        valign: "middle"
+        pos_hint: {"x": 0.25, "y": 0.25}
+        text: "Continue"
+        on_release: root.switchScreen("kmcVisual"), root.prepareDisplay(), root.getKMC(), root.refreshImage()
+    
+<KMCVisualScreen>:
+    orientation: "vertical"
+    size: root.size
+    BackButton:
+        on_release: root.switchScreen("kmcInfo")
+    Label:
+        id: displayPath
+        pos_hint: {"x": -0.2, "y": 0.42}
+        bold: True
+        font_size: min(self.width * 0.04, self.height * 0.04)
+    Image:
+        id: display
+        size_hint: 0.6, 0.6
+        pos_hint: {"x": 0, "y": 0.28}
+        source: "kmcplot.png"
+        allow_stretch: True
+    
+    Label:
+        id: variance
+        pos_hint: {"x": 0.22, "y": 0.22}
+        bold: True
+        font_size: min(self.width * 0.04, self.height * 0.04)
+        text: "Variance Explained"
+    
+    Label:
+        id: varianceValue
+        pos_hint: {"x": 0.22, "y": 0.16}
+        bold: False
+        font_size: min(self.width * 0.04, self.height * 0.04)
+    
+
+
+<SLRInfoScreen>:
+    orientation: "vertical"
+    size: root.size
+    BackButton:
+        on_release: root.switchScreen("main")
+    Label:
+        id: slrInfoHeader
+        text: "SLR Info"
+        bold: True
+        font_size: min(self.width * 0.1, self.height * 0.6)
+        pos_hint: {"x": 0, "y": 0.25}
+    
+    Label:
+        id: xHeader
+        text: "X Target:"
+        bold: False
+        font_size: min(self.width * 0.08, self.height * 0.08)
+        pos_hint: {"x": -0.25, "y": 0.04}
+    
+    Label:
+        id: yHeader
+        text: "Y Target:"
+        bold: False
+        font_size: min(self.width * 0.08, self.height * 0.08)
+        pos_hint: {"x": -0.25, "y": -0.06}
+    
+    
+    Label:
+        id: pathHeader
+        text: "Path:"
+        bold: False
+        font_size: min(self.width * 0.08, self.height * 0.08)
+        pos_hint: {"x": -0.25, "y": -0.16}
+
+    
+
+    EntryField:
+        id: xinput
+        pos_hint: {"x": 0.4, "y": 0.5}
+        on_text:root.setX(self.text)
+    
+    EntryField:
+        id: yInput
+        pos_hint: {"x": 0.4, "y": 0.4}
+        on_text: root.setY(self.text)
+
+    EntryField:
+        id: path
+        pos_hint: {"x": 0.4, "y": 0.3}
+        on_text: root.setPath(self.text)
+
+    GeneralPurposeButton:
+        halign: "center"
+        valign: "middle"
+        pos_hint: {"x": 0.25, "y": 0.15}
+        text: "Continue"
+        on_release: root.switchScreen("slrVisual"), root.prepareDisplay(), root.refreshImage(), root.getSLR()
+
+<SLRVisualScreen>:
+    orientation: "vertical"
+    size: root.size
+    BackButton:
+        on_release: root.switchScreen("slrInfo")
+    InfoLabel:
+        id: displayPath
+        pos_hint: {"x": -0.22, "y": 0.4}
+    Image:
+        id: display
+        size_hint: 0.6, 0.6
+        pos_hint: {"x": 0, "y": 0.25}
+        source: "lmplot.png"
+        allow_stretch: True
+    Label:
+        id: b0
+        pos_hint: {"x": 0.24, "y": 0.22}
+        bold: True
+        font_size: min(self.width * 0.04, self.height * 0.04)
+        text: "b0"
+    
+    
+    Label:
+        id: b1
+        pos_hint: {"x": 0.215, "y": 0.12}
+        bold: True
+        font_size: min(self.width * 0.04, self.height * 0.04)
+        text: "b1"
+    
+    
+    Label:
+        id: R2
+        pos_hint: {"x": 0.22, "y": 0}
+        bold: True
+        font_size: min(self.width * 0.04, self.height * 0.04)
+        text: "R2"
+
+    Label:
+        id: b0Value
+        pos_hint: {"x": 0.25, "y": 0.18}
+        bold: False
+        font_size: min(self.width * 0.04, self.height * 0.04)
+    Label:
+        id: b1Value
+        pos_hint: {"x": 0.23, "y": 0.08}
+        bold: False
+        font_size: min(self.width * 0.04, self.height * 0.04)
+    Label:
+        id: R2Value
+        pos_hint: {"x": 0.2, "y": -0.05}
+        bold: False
+        font_size: min(self.width * 0.04, self.height * 0.04)
+
+<DTInfoScreen>:
+    orientation: "vertical"
+    size: root.size
+    BackButton:
+        on_release: root.switchScreen("main")
+    Label:
+        id: dtInfoHeader
+        text: "DT Info"
+        bold: True
+        font_size: min(self.width * 0.1, self.height * 0.6)
+        pos_hint: {"x": 0, "y": 0.25}
+    
+    Label:
+        id: targetHeader
+        text: "Target:"
+        bold: False
+        font_size: min(self.width * 0.08, self.height * 0.08)
+        pos_hint: {"x": -0.25, "y": 0.04}
+    
+    Label:
+        id: pathHeader
+        text: "Path:"
+        bold: False
+        font_size: min(self.width * 0.08, self.height * 0.08)
+        pos_hint: {"x": -0.25, "y": -0.06}
+
+    EntryField:
+        id: target
+        pos_hint: {"x": 0.4, "y": 0.5}
+        on_text: root.setTarget(self.text)
+
+    EntryField:
+        id: path
+        pos_hint: {"x": 0.4, "y": 0.4}
+        on_text: root.setPath(self.text)
+
+
+    GeneralPurposeButton:
+        halign: "center"
+        valign: "middle"
+        pos_hint: {"x": 0.25, "y": 0.25}
+        text: "Continue"
+        on_release: root.switchScreen("dtVisual"), root.getDT(), root.prepareDisplay(), root.refreshImage()
+    
+<DTVisualScreen>:
+    orientation: "vertical"
+    size: root.size
+    BackButton:
+        on_release: root.switchScreen("dtInfo")
+    InfoLabel:
+        id: displayPath
+        pos_hint: {"x": -0.22, "y": 0.42}
+        bold: True
+    Image:
+        size_hint: 0.6, 0.6
+        pos_hint: {"x": 0, "y": 0.28}
+        source: "dtplot.png"
+        allow_stretch: True
+    Label:
+        id: accuracy
+        pos_hint: {"x": 0.28, "y": 0.1}
+        bold: True
+        font_size: min(self.width * 0.04, self.height * 0.04)
+        text: "Accuracy"
+    
+    Label:
+        id: accuracyValue
+        pos_hint: {"x": 0.1, "y": -0.05}
+        bold: False
+        font_size: min(self.width * 0.04, self.height * 0.04)
+
+
+

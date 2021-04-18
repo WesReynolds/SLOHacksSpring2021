@@ -1,0 +1,98 @@
+#:kivy 1.0.9
+
+<HomeScreenButton@Button>:
+    size_hint: 0.75, 0.1
+    font_size: min(self.height * 0.7, self.width * 1.7 / len(self.text)) if len(self.text) else self.height
+    halign: "center"
+    valign: "middle"
+    bold: True
+
+<BackButton@Button>:
+    size_hint: 0.1, 0.1
+    pos_hint: {"x": 0.01, "y": 0.01}
+    text: "Back"
+    font_size: min(self.height * 0.7, self.width * 1.5 / len(self.text)) if len(self.text) else self.height
+    halign: "center"
+    valign: "middle"
+    bold: True
+
+<GeneralPurposeButton@Button>:
+    size_hint: 0.5, 0.1
+    font_size: min(self.height * 0.7, self.width * 1.7 / len(self.text)) if len(self.text) else self.height
+    halign: "center"
+    valign: "middle"
+    bold: True
+
+<InfoLabel@Label>:
+    font_size: min(self.width * 0.05, self.height * 0.3)
+    halign: "center"
+    valign: "bottom"
+    bold: True
+
+<EntryField@TextInput>:
+    multiline: "false"
+    size_hint: 0.5, 0.075
+    font_size: min(self.height * 0.6, self.width * 1.4 / len(self.text)) if len(self.text) else self.height
+    halign: "center"
+    valign: "top"
+
+<MainScreen>:
+    orientation: "vertical"
+    size: root.size
+    Label:
+        id: headerText
+        text: "Stats Machine"
+        bold: True
+        font_size: min(self.width * 0.1, self.height * 0.6)
+        pos_hint: {"x": 0, "y": 0.10}
+    HomeScreenButton:
+        id: KMCButton
+        text: "K-Means Clustering"
+        pos_hint: {"x": 0.125, "y": 0.35}
+        on_release: root.switchScreen("kmcInfo")
+    HomeScreenButton:
+        id: SLRButton
+        text: "Simple Linear Regression"
+        pos_hint: {"x": 0.125, "y": 0.23}
+        on_release: root.switchScreen("second")
+
+<KMCInfoScreen>:
+    orientation: "vertical"
+    size: root.size
+    BackButton:
+        on_release: root.switchScreen("main")
+    GeneralPurposeButton:
+        text: "Continue"
+        halign: "center"
+        valign: "middle"
+        pos_hint: {"x": 0.25, "y": 0.32}
+        on_release: root.switchScreen("kmcVisual"), root.getKMC(), root.refreshImage()
+    InfoLabel:
+        id: filePathLabel
+        text: "File Path"
+        pos_hint: {"x": 0, "y": 0.4}
+    EntryField:
+        id: filePathEntry
+        pos_hint: {"x": 0.25, "y": 0.79}
+        on_text: root.setFilePath(self.text)
+    InfoLabel:
+        id: kLabel
+        text: "K"
+        pos_hint: {"x": 0, "y": 0.23}
+    EntryField:
+        id: filePathEntry
+        pos_hint: {"x": 0.25, "y": 0.62}
+        on_text: root.setK(self.text)
+
+<KMCVisualScreen>:
+    orientation: "vertical"
+    size: root.size
+    BackButton:
+        on_release: root.switchScreen("kmcInfo")
+    Image:
+        id: display
+        pos_hint_y: 0.5
+        pos_hint_x: 0.5
+        size_hint_x: 0.7
+        size_hint_y: 0.7
+        source: "kmcplot.png"

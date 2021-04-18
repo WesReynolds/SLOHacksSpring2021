@@ -12,7 +12,7 @@ linear_output = function(data, x, y, xlabel, ylabel, title){
   mx = coef(summary(lm(y~x)))["(Intercept)", "Estimate"]
   b = coef(summary(lm(y~x)))["x", "Estimate"]
   r2 = summary(lm(y~x))$adj.r.squared
-
+  
   df = data.frame(mx, b, r2)
   
   write.csv(df, "colm.csv")
@@ -40,44 +40,12 @@ read_csv_lm = function(args){
   linear_output(data, x, y, xlabel, ylabel, title)
 }
 
-create_train_test <- function(data, size = 0.8, train = TRUE) {
-  n_row = nrow(data)
-  total_row = size * n_row
-  train_sample = 1:total_row
-  if (train == TRUE) {
-    return (data[train_sample, ])
-  } else {
-    return (data[-train_sample, ])
-  }
-}
-
-
 dt_output = function(data1, target){
-  
-  variable = c(".")
-  
-  #Image
-  #png("dtplot.png")
-  data_train <- create_train_test(data1, 0.8, train = TRUE)
-  data_test <- create_train_test(data1, 0.8, train = FALSE)
-  
-  target1 = as.formula(paste(target, paste(variable), sep = "~"))
-  tree = rpart(target1, data = data1, cp=.02)
-  rpart.plot(tree)
-  dev.off()
   png("dtplot.png")
-
-  #Accuracy
-
-  prediction = predict(tree, data_test, type='class')
-
-  table_mat = table(data_test[[target]], prediction)
-
-  accuracy = data.frame(sum(diag(table_mat)) / sum(table_mat))
-  names(accuracy) = c("accuracy")
-
-  write.csv(accuracy, "accuracy.csv")
-  
+  target = data1[,target]
+  tree = rpart(target~., data = data1, cp=.02)
+  rpart.plot(tree, box.palette="RdBu", shadow.col="gray", nn=TRUE)
+  dev.off()
 }
 
 read_csv_dt = function(args){
@@ -86,49 +54,23 @@ read_csv_dt = function(args){
   dt_output(data, target)
 }
 
-kmc_output = function(t_vec, cen, arg){
-  
-  #values for graph 
-  x1 = t_vec$x
-  y1 = t_vec$y
-  x2 = cen$x
-  y2 = cen$y
-  
-  #label graph 
-  xlabel = arg$xlabel
-  ylabel = arg$ylabel
-  title = arg$title
-  
-  ggplot() +
-    geom_point(data = t_vec, 
-               aes(x1, y1)) +
-    geom_point(data = cen, 
-               aes(x2, y2), color = "red") +
-    ggtitle(title) +
-    xlab(xlabel) + 
-    ylab(ylabel)
-  ggsave(file="kmcplot.png")
-}
-  
 read_csv_kmc = function(args){
   t_vec = read.csv(file = args[2])
-  cen = read.csv(file = args[3])
-  arg = read.csv(file = args[4])
-  kmc_output(t_vec, cen, arg)
+  k_vec = read.csv(file = args[3])
 }
 
 kmcEigen = function(args){
   data <- read.csv(args[2])
   data
-
+  
   M <- cor(data)
   ev <- eigen(M)
-
+  
   eVec1 <- ev$vectors[1,]
   eVec2 <- ev$vectors[2,]
-
+  
   df <- data.frame(c(eVec1), c(eVec2))
-
+  
   write.csv(df, "eigenVectors.csv")
 }
 
