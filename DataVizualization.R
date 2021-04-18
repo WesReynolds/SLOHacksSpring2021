@@ -40,12 +40,41 @@ read_csv_lm = function(args){
   linear_output(data, x, y, xlabel, ylabel, title)
 }
 
+create_train_test <- function(data, size = 0.8, train = TRUE) {
+  n_row = nrow(data)
+  total_row = size * n_row
+  train_sample = 1:total_row
+  if (train == TRUE) {
+    return (data[train_sample, ])
+  } else {
+    return (data[-train_sample, ])
+  }
+}
+
+
 dt_output = function(data1, target){
+  
+  variable = c(".")
+  
+  #Image
   png("dtplot.png")
-  target = data1[,target]
-  tree = rpart(target~., data = data1, cp=.02)
-  rpart.plot(tree, box.palette="RdBu", shadow.col="gray", nn=TRUE)
+  data_train <- create_train_test(data1, 0.8, train = TRUE)
+  data_test <- create_train_test(data1, 0.8, train = FALSE)
+  
+  data1 = data.frame(data1)
+  
+  target = as.formula(paste(target, paste(variable), sep = "~"))
+  
+  tree = rpart(target, data = data_train, cp=.02)
+  rpart.plot(tree)
+  
+  prediction = predict(tree, data_test)
+  table_mat <- table(data_test[], predict_unseen)
+  
   dev.off()
+  
+  #Accuracy
+  
 }
 
 read_csv_dt = function(args){
@@ -54,9 +83,35 @@ read_csv_dt = function(args){
   dt_output(data, target)
 }
 
+kmc_output = function(t_vec, cen, arg){
+  
+  #values for graph 
+  x1 = t_vec$x
+  y1 = t_vec$y
+  x2 = cen$x
+  y2 = cen$y
+  
+  #label graph 
+  xlabel = arg$xlabel
+  ylabel = arg$ylabel
+  title = arg$title
+  
+  ggplot() +
+    geom_point(data = t_vec, 
+               aes(x1, y1)) +
+    geom_point(data = cen, 
+               aes(x2, y2), color = "red") +
+    ggtitle(title) +
+    xlab(xlabel) + 
+    ylab(ylabel)
+  ggsave(file="kmcplot.png")
+}
+  
 read_csv_kmc = function(args){
   t_vec = read.csv(file = args[2])
-  k_vec = read.csv(file = args[3])
+  cen = read.csv(file = args[3])
+  arg = read.csv(file = args[4])
+  kmc_output(t_vec, cen, arg)
 }
 
 main = function(){

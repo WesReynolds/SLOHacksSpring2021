@@ -19,13 +19,18 @@ def dec_tree(data, target):
     subprocess.run(["Rscript", "DataVizualization.R", "dt", data, target])
 
 
-def kmc(data, data1):
-    subprocess.run(["Rscript", "DataVizualization.R", "dt", data, data1])
+def kmc(data, data1, xlabel, ylabel, title):
+    with open('arg.csv', mode='w') as arg_file:
+        arg_csv = csv.writer(arg_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        arg_csv.writerow(["xlabel", "ylabel", "title"])
+        arg_csv.writerow([xlabel, ylabel, title])
+    subprocess.run(["Rscript", "DataVizualization.R", "kmc", data, data1, "arg.csv"])
 
 
 #linear_m(x, y, xlabel, ylabel, title, "mtcars.csv")
-dec_tree("mtcars.csv", "mpg")
-#kmc()
+dec_tree("titan2.csv", "survived")
+
+#kmc("pcaTraining.csv", "kMeans.csv", xlabel, ylabel, title)
 
 
 
